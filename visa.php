@@ -5,7 +5,7 @@ $cartTotal = 0;
 
 if (isset($_SESSION['cart'])) {
     foreach ($_SESSION['cart'] as $item) {
-        $cartTotal += $item['price'];
+        $cartTotal += $item['price'] * $item['qty'];
     }
 }
 
