@@ -1,6 +1,7 @@
 <?php
 // Include configuration file	
-include 'paypalconfig.php';	
+session_start();
+include 'paypalconfig.php';
 
 // If transaction data is available in the URL 
 if(!empty($_GET['item_number']) && !empty($_GET['tx']) 
@@ -30,22 +31,49 @@ if(!empty($_GET['item_number']) && !empty($_GET['tx'])
 
         <?php if (!empty($txn_id)) { ?>
 
-            <h1 class="success">Your Payment has been Successful</h1>
+        <h2 class="success">Your Payment has been Successful</h2>
 
-            <h4>Payment Information</h4>
-            <p><b>Transaction ID:</b> <?php echo $txn_id; ?></p>
-            <p><b>Paid Amount:</b> <?php echo $payment_gross; ?> AUD</p>
-            <p><b>Payment Status:</b> <?php echo $payment_status; ?></p>
+    
+        <p><b>Transaction ID:</b> <?php echo $txn_id; ?></p>
+        <p><b>Paid Amount:</b> <?php echo $payment_gross; ?> AUD</p>
+        <p><b>Payment Status:</b> <?php echo $payment_status; ?></p>
 
-            <h4>Product Information</h4>
+<br>
 
-            <p><b>Name:</b> Bronton</p>
-            <p><b>Price:</b> $3,000.00</p>
+    <h3>Product Information</h3>
+    <?php
+    $total = 0;
 
-            <p><b>Name:</b> F-65</p>
-            <p><b>Price:</b> $700.00</p>
+    if(isset($_SESSION['cart'])) {
+        foreach($_SESSION['cart'] as $item) {
+            $itemTotal = $item['price'] * $item['qty'];
+            $total += $itemTotal;
+    ?>
+        <p>
+            <b>Product Name:</b>
+            <?php echo $item['name']; ?>
+            </p>
 
-            <p><b>Total:</b> $3,700.00</p>
+        <p>
+            <b>Quantity:</b>
+            <?php echo $item['qty']; ?>
+        </p>
+
+        <p>
+            <b>Price:</b>
+            $<?php echo number_format($itemTotal, 2); ?>
+        </p>
+    <hr>
+
+    <?php
+        }
+    }
+    ?>
+
+<p>
+    <b>Total:</b>
+    $<?php echo number_format($total, 2); ?>
+</p>
 
         <?php } else { ?>
             <h1 class="error">Your Payment has Failed</h1>

@@ -7,8 +7,8 @@
 define('PAYPAL_ID', 'sb-jrmoz52565054@business.example.com'); //seller email
 define('PAYPAL_SANDBOX', TRUE); //TRUE or FALSE
 //redirect page
-define('PAYPAL_RETURN_URL', 'http://localhost/A2/Q1_A2/success.php'); 
-define('PAYPAL_NOTIFY_URL', 'http://127.0.0.1/A2/Q1_A2/success.php');
+define('PAYPAL_RETURN_URL', 'http://localhost/A2/E-commerce-A2/success.php'); 
+define('PAYPAL_NOTIFY_URL', 'http://127.0.0.1/A2/E-commerce-A2/success.php');
 //define currency
 define('PAYPAL_CURRENCY', 'AUD');
 
