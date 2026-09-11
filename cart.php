@@ -178,8 +178,8 @@ if(isset($_SESSION['cart'])) {
 <div class="cart-item">
     <div>
         <input type="checkbox"
-               name="selected[]"
-               value="<?php echo $index; ?>">
+            name="selected[]"
+            value="<?php echo $index; ?>">
     </div>
     <div>
         <img src="<?php echo $item['image']; ?>" alt="<?php echo $item['name']; ?>"
@@ -341,6 +341,19 @@ if(isset($_SESSION['cart'])) {
 
             </div>
 
+            <!-- define Visa button and send data -->
+            <div class="checkout-container"
+                id="visa-checkout-container"
+                style="display:none;">
+
+                <button type="button"
+                        class="checkout-btn"
+                        id="visa-btn">
+                    CHECKOUT NOW
+                </button>
+
+            </div>
+
     </div>
 </div>
 
@@ -362,27 +375,42 @@ const mastercardContainer =
         'mastercard-checkout-container'
     );
 
+const visaContainer =
+    document.getElementById(
+        'visa-checkout-container'
+    );
+
 paymentMethods.forEach(method => {
     method.addEventListener('change', function() {
         if (this.value === 'paypal') {
             paypalContainer.style.display = 'flex';
             googleCheckoutContainer.style.display = 'none';
             mastercardContainer.style.display = 'none';
+            visaContainer.style.display = 'none';
 
         } else if (this.value === 'googlepay') {
             paypalContainer.style.display = 'none';
             googleCheckoutContainer.style.display = 'flex';
             mastercardContainer.style.display = 'none';
+            visaContainer.style.display = 'none';
 
         } else if (this.value === 'mastercard') {
             paypalContainer.style.display = 'none';
             googleCheckoutContainer.style.display = 'none';
             mastercardContainer.style.display = 'flex';
+            visaContainer.style.display = 'none';
+
+        } else if (this.value === 'visa') {
+            paypalContainer.style.display = 'none';
+            googleCheckoutContainer.style.display = 'none';
+            mastercardContainer.style.display = 'none';
+            visaContainer.style.display = 'flex';
 
         } else {
             paypalContainer.style.display = 'none';
             googleCheckoutContainer.style.display = 'none';
             mastercardContainer.style.display = 'none';
+            visaContainer.style.display = 'none';
 
         }
 
@@ -392,7 +420,7 @@ paymentMethods.forEach(method => {
 </script>
 
 
-<!-- Script for Google Pay -->
+<!-- Script for Google Pay to lead to payment page-->
 <script>
 const cartTotal = "<?php echo $cartTotal; ?>";
 </script>
@@ -410,9 +438,17 @@ document.getElementById('google-pay-btn').addEventListener('click', function() {
 });
 </script>
 
+<!-- Script for Mastercard to lead to payment page-->
 <script>
 document.getElementById('mastercard-btn').addEventListener('click', function() {
     window.location.href = "mastercard.php";
+});
+</script>
+
+<!-- Script for Visa to lead to payment page-->
+<script>
+document.getElementById('visa-btn').addEventListener('click', function() {
+    window.location.href = "visa.php";
 });
 </script>
 

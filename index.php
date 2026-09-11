@@ -73,7 +73,6 @@ session_start();
     <div class="container">
 
         <div class="row">
-      
             <div class="col-md-9">
                 <div>
                     <ol class="breadcrumb">
@@ -88,7 +87,7 @@ session_start();
                         <div class="btn-group">
                             <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
                                 Sort Products &nbsp;
-      <span class="caret"></span>
+    <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu">
                                 <li><a href="#">By Price Low</a></li>
@@ -204,7 +203,7 @@ session_start();
                 <strong>Our Location</strong>
                 <hr>
                 <p>
-                     Swanston St, Melbourne,<br />
+                    Swanston St, Melbourne,<br />
                                     VIC 3000, Australia<br />
                     Call: +61-000-000-000<br>
                     Email: info@alicebikeshop.com<br>
@@ -212,7 +211,7 @@ session_start();
 
                 2020 www.alicebikeeshop.com | All Right Reserved
             </div>
-          
+    
         </div>
         <hr>
     </div>

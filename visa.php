@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Mastercard Payment</title>
+    <title>Visa Payment</title>
 
     <style>
         body {
@@ -72,9 +72,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <div class="payment-box">
 
-<h2>Mastercard Payment</h2>
+<h2>Visa Payment</h2>
     <p>
-    <img src="assets/img/mastercard.jpg" alt="Mastercard" class="mastercard-logo">
+    <img src="assets/img/visa.jpg" alt="Visa" class="mastercard-logo">
 
     <h2>Billing Address</h2>
 
