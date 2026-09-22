@@ -3,7 +3,7 @@
 session_start();
 include 'paypalconfig.php';
 
-// If transaction data is available in the URL 
+// If transaction data is available in the URL for PayPal
 if(!empty($_GET['item_number']) && !empty($_GET['tx']) 
 && !empty($_GET['amt']) && !empty($_GET['cc']) 
 && !empty($_GET['st'])){ 
@@ -14,6 +14,38 @@ if(!empty($_GET['item_number']) && !empty($_GET['tx'])
 		$currency_code = $_GET['cc']; 
 		$payment_status = $_GET['st']; 
 	}
+
+// If transaction data is available in the session for Mastercard or Visa
+$mastercard = false;
+$visa = false;
+
+if (
+    isset($_GET['gateway']) &&
+    $_GET['gateway'] == 'mastercard' &&
+    isset($_SESSION['mastercard_payment'])
+) {
+    $mastercard = true;
+
+    $mc = $_SESSION['mastercard_payment'];
+
+    $txn_id = $mc['transaction_id'];
+    $payment_gross = $mc['amount'];
+    $payment_status = $mc['status'];
+}
+
+if (
+    isset($_GET['gateway']) &&
+    $_GET['gateway'] == 'visa' &&
+    isset($_SESSION['visa_payment'])
+) {
+    $visa = true;
+
+    $visaData = $_SESSION['visa_payment'];
+
+    $txn_id = $visaData['transaction_id'];
+    $payment_gross = $visaData['amount'];
+    $payment_status = $visaData['status'];
+}
 ?>
 
 <!DOCTYPE html>
@@ -33,10 +65,19 @@ if(!empty($_GET['item_number']) && !empty($_GET['tx'])
 
         <h2 class="success">Your Payment has been Successful</h2>
 
-    
         <p><b>Transaction ID:</b> <?php echo $txn_id; ?></p>
         <p><b>Paid Amount:</b> <?php echo $payment_gross; ?> AUD</p>
         <p><b>Payment Status:</b> <?php echo $payment_status; ?></p>
+        <p>
+            <b>Payment Method:</b>
+            <?php if ($mastercard) { ?>
+                Mastercard
+            <?php } elseif ($visa) { ?>
+                Visa
+            <?php } else { ?>
+                PayPal
+            <?php } ?>
+        </p>
 
 <br>
 
@@ -53,12 +94,10 @@ if(!empty($_GET['item_number']) && !empty($_GET['tx'])
             <b>Product Name:</b>
             <?php echo $item['name']; ?>
             </p>
-
         <p>
             <b>Quantity:</b>
             <?php echo $item['qty']; ?>
         </p>
-
         <p>
             <b>Price:</b>
             $<?php echo number_format($itemTotal, 2); ?>

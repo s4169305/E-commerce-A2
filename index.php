@@ -113,7 +113,7 @@ session_start();
                                 <h3>Bronton </a></h3>
                                 <p>Price : <strong>$ 3000</strong>  </p>
 
-                                <!-- Button that adds the chosen bike to the cart page-->
+                                <!-- Button that adds the Bronton bike to the cart page-->
                                 <form action="cart.php" method="post">
 
                                     <input type="hidden" name="name" value="Bronton">
@@ -138,7 +138,7 @@ session_start();
                             <div class="caption">
                                 <h3>E-BMX </></h3>
                                 <p>Price : <strong>$ 2000</strong>  </p>
-                                <!-- Button that adds the chosen bike to the cart page-->
+                                <!-- Button that adds the E-BMX bike to the cart page-->
                                 <form action="cart.php" method="post">
                                     <input type="hidden" name="name" value="E-BMX">
                                     <input type="hidden" name="price" value="2000">
@@ -161,7 +161,7 @@ session_start();
                             <div class="caption">
                                 <h3>F-65 </></h3>
                                 <p>Price : <strong>$ 700</strong>  </p>
-                                <!-- Button that adds the chosen bike to the cart page-->
+                                <!-- Button that adds the F65 bike to the cart page-->
                                 <form action="cart.php" method="post">
                                     <input type="hidden" name="name" value="F65">
                                     <input type="hidden" name="price" value="700">

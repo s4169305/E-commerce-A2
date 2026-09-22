@@ -10,7 +10,14 @@ if (isset($_SESSION['cart'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    header("Location: success.php");
+    $_SESSION['visa_payment'] = [
+        'cardholder_name' => $_POST['cardholder_name'],
+        'amount' => $cartTotal,
+        'status' => 'Completed',
+        'transaction_id' => 'VI' . time()
+    ];
+
+    header("Location: success.php?gateway=visa");
     exit();
 }
 ?>
@@ -90,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
     </div>
 
-    <label>Username</label>
+    <label>Email</label>
         <input type="text"
             placeholder="you@example.com"
             required>
@@ -131,21 +138,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         <label>Card Number</label>
         <input type="text"
+            name="card_number"
             placeholder="5555 5555 5555 4444"
             required>
 
         <label>Cardholder Name</label>
         <input type="text"
-            placeholder="John Smith"
+            name="cardholder_name"
+            placeholder="John Doeskip"
             required>
 
         <label>Expiry Date</label>
         <input type="text"
+            name="expiry_date"
             placeholder="MM/YY"
             required>
 
         <label>CVV</label>
         <input type="text"
+            name="cvv"
             placeholder="123"
             required>
 

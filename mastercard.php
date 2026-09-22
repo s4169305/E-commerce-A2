@@ -10,7 +10,13 @@ if (isset($_SESSION['cart'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    header("Location: success.php");
+    $_SESSION['mastercard_payment'] = [
+        'cardholder_name' => $_POST['cardholder_name'],
+        'amount' => $cartTotal,
+        'status' => 'Completed',
+        'transaction_id' => 'MC' . time()
+    ];
+    header("Location: success.php?gateway=mastercard");
     exit();
 }
 ?>
@@ -73,6 +79,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <div class="payment-box">
 
 <h2>Mastercard Payment</h2>
+
+    <?php if(isset($error)): ?>
+    <p style="color:red;">
+        <?php echo $error; ?>
+    </p>
+    <?php endif; ?>
+
     <p>
     <img src="assets/img/mastercard.jpg" alt="Mastercard" class="mastercard-logo">
 
@@ -86,18 +99,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         <div class="field">
             <label>Last Name</label>
-            <input type="text" placeholder="Smith" required>
+            <input type="text" placeholder="Doeskip" required>
         </div>
     </div>
 
-    <label>Username</label>
+    <label>Email</label>
         <input type="text"
             placeholder="you@example.com"
             required>
 
     <label>Address</label>
         <input type="text"
-            placeholder="123 Main St"
+            placeholder="1 Cheeseman Ave"
             required>
         
     <label>Address 2 (Optional)</label>
@@ -131,21 +144,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         <label>Card Number</label>
         <input type="text"
+            name="card_number"
             placeholder="5555 5555 5555 4444"
             required>
 
         <label>Cardholder Name</label>
         <input type="text"
-            placeholder="John Smith"
+            name="cardholder_name"
+            placeholder="John Doeskip"
             required>
 
         <label>Expiry Date</label>
         <input type="text"
+            name="expiry_date"
             placeholder="MM/YY"
             required>
 
         <label>CVV</label>
         <input type="text"
+            name="cvv"
             placeholder="123"
             required>
 
