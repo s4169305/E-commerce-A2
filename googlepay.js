@@ -22,7 +22,7 @@ const baseRequest = {
  * @todo check with your gateway on the parameters to pass
  * @see {@link https://developers.google.com/pay/api/web/reference/request-objects#gateway|PaymentMethodTokenizationSpecification}
  */
-//Request a payment token for your payment provider
+
 const tokenizationSpecification = {
   type: 'PAYMENT_GATEWAY',
   parameters: {
