@@ -223,11 +223,13 @@ $cartTotal = cart_total();
 if(isset($_SESSION['cart'])) {
     foreach($_SESSION['cart'] as $index => $item) {
 ?>
-<div class="cart-item">
-    <div>
-        <img src="<?php echo $item['image']; ?>" alt="<?php echo $item['name']; ?>"
-            width="100">
-    </div>
+
+    <!-- Item Image-->
+    <div class="cart-item">
+        <div>
+            <img src="<?php echo $item['image']; ?>" alt="<?php echo $item['name']; ?>"
+                width="100">
+        </div>
 
     <!-- Item description-->
     <div class="description">
