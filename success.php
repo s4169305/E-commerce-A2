@@ -1,51 +1,50 @@
 <?php
-// Include configuration file	
 session_start();
 include 'paypalconfig.php';
+require_once __DIR__ . '/cart_helpers.php';
 
-// If transaction data is available in the URL for PayPal
-if(!empty($_GET['item_number']) && !empty($_GET['tx']) 
-&& !empty($_GET['amt']) && !empty($_GET['cc']) 
-&& !empty($_GET['st'])){ 
-		// Get transaction information from URL 
-		$item_number = $_GET['item_number'];  
-		$txn_id = $_GET['tx']; 
-		$payment_gross = $_GET['amt']; 
-		$currency_code = $_GET['cc']; 
-		$payment_status = $_GET['st']; 
-	}
+if (!empty($_GET['item_number']) && !empty($_GET['tx']) && !empty($_GET['amt']) && !empty($_GET['cc']) && !empty($_GET['st'])) {
+    $item_number = $_GET['item_number'];
+    $txn_id = $_GET['tx'];
+    $payment_gross = $_GET['amt'];
+    $currency_code = $_GET['cc'];
+    $payment_status = $_GET['st'];
+}
 
-// If transaction data is available in the session for Mastercard or Visa
 $mastercard = false;
-$visa = false;
-
-if (
-    isset($_GET['gateway']) &&
-    $_GET['gateway'] == 'mastercard' &&
-    isset($_SESSION['mastercard_payment'])
-) {
+if (isset($_GET['gateway']) && $_GET['gateway'] == 'mastercard' && isset($_SESSION['mastercard_payment'])) {
     $mastercard = true;
-
     $mc = $_SESSION['mastercard_payment'];
-
     $txn_id = $mc['transaction_id'];
     $payment_gross = $mc['amount'];
     $payment_status = $mc['status'];
 }
 
-if (
-    isset($_GET['gateway']) &&
-    $_GET['gateway'] == 'visa' &&
-    isset($_SESSION['visa_payment'])
-) {
+$visa = false;
+if (isset($_GET['gateway']) && $_GET['gateway'] == 'visa' && isset($_SESSION['visa_payment'])) {
     $visa = true;
-
     $visaData = $_SESSION['visa_payment'];
-
     $txn_id = $visaData['transaction_id'];
     $payment_gross = $visaData['amount'];
     $payment_status = $visaData['status'];
 }
+
+$googlepay = false;
+if (isset($_GET['gateway']) && $_GET['gateway'] == 'googlepay') {
+    $googlepay = true;
+    $txn_id = 'GP' . time();
+    $payment_gross = cart_total();
+    $payment_status = 'Completed';
+}
+
+$stripe = false;
+if (isset($_GET['gateway']) && $_GET['gateway'] == 'stripe') {
+    $stripe = true;
+    $txn_id = 'STR' . time();
+    $payment_gross = cart_total();
+    $payment_status = 'Completed';
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -54,8 +53,66 @@ if (
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Payment Gateway</title>
+    <!-- Bootstrap core CSS -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    <!-- Fontawesome core CSS -->
+    <link href="assets/css/font-awesome.min.css" rel="stylesheet" />
+    <!--GOOGLE FONT -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <!--Slide Show Css -->
+    <link href="assets/ItemSlider/css/main-style.css" rel="stylesheet" />
+    <!-- custom CSS here -->
+    <link href="assets/css/style.css" rel="stylesheet" />
 </head>
 <body>
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.php"><strong>ALICE'S</strong> ELECTRONIC BIKE Shop</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#">Track Order</a></li>
+                    <li><a href="#">Login</a></li>
+                    <li><a href="#">Signup</a></li>
+
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">24x7 Support <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#"><strong>Call: </strong>+61-000-000-000</a></li>
+                            <li><a href="#"><strong>Mail: </strong>info@alicebikeshop.com</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#"><strong>Address: </strong>
+                                <div>
+                                    Melbourne,<br />
+                                    VIC 3000, AUSTRALIA
+                                </div>
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <form class="navbar-form navbar-right" role="search">
+                    <div class="form-group">
+                        <input type="text" placeholder="Enter Keyword Here ..." class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </form>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
 <h1>Payment Info</h1>
 
 <div class="container">
@@ -74,6 +131,8 @@ if (
                 Mastercard
             <?php } elseif ($visa) { ?>
                 Visa
+            <?php } elseif ($googlepay) { ?>
+                Google Pay
             <?php } else { ?>
                 PayPal
             <?php } ?>

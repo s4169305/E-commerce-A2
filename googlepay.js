@@ -137,13 +137,6 @@ function getGoogleIsReadyToPayRequest() {
 function onGooglePayLoaded() {
   const paymentsClient = getGooglePaymentsClient();
   paymentsClient.isReadyToPay(getGoogleIsReadyToPayRequest())
-      .then(function(response) {
-        if (response.result) {
-          addGooglePayButton();
-          // @todo prefetch payment data to improve performance after confirming site functionality
-          // prefetchGooglePaymentData();
-        }
-      })
       .catch(function(err) {
         // show error in developer console for debugging
         console.error(err);
@@ -156,16 +149,7 @@ function onGooglePayLoaded() {
  * @see {@link https://developers.google.com/pay/api/web/reference/request-objects#ButtonOptions|Button options}
  * @see {@link https://developers.google.com/pay/api/web/guides/brand-guidelines|Google Pay brand guidelines}
  */
-//7. Add a Google Pay payment button
-function addGooglePayButton() {
-  const paymentsClient = getGooglePaymentsClient();
-  const button =
-      paymentsClient.createButton({
-        onClick: onGooglePaymentButtonClicked,
-        allowedPaymentMethods: [baseCardPaymentMethod]
-      });
-  document.getElementById('container').appendChild(button);
-}
+
 
 /**
 * Configure support for the Google Pay API
@@ -232,14 +216,13 @@ function onGooglePaymentButtonClicked() {
 
   const paymentsClient = getGooglePaymentsClient();
   paymentsClient.loadPaymentData(paymentDataRequest)
-      .then(function(paymentData) {
-        // handle the response
-        processPayment(paymentData);
-      })
-      .catch(function(err) {
-        // show error in developer console for debugging
-        console.error(err);
-      });
+    .then(function(paymentData) {
+      console.log("loadPaymentData success");
+      processPayment(paymentData);
+    })
+    .catch(function(err) {
+      console.error(err);
+    });
 }
 
 /**
@@ -253,22 +236,15 @@ function onGooglePaymentButtonClicked() {
 */
 //10.3  Set up Authorize Payments
 function onPaymentAuthorized(paymentData) {
+  console.log("onPaymentAuthorized fired");
   return new Promise(function(resolve, reject){
-    // handle the response
     processPayment(paymentData)
-    .then(function() {
-      resolve({transactionState: 'SUCCESS'});
-    })
-    .catch(function() {
-      resolve({
-        transactionState: 'ERROR',
-        error: {
-          intent: 'PAYMENT_AUTHORIZATION',
-          message: 'Insufficient funds',
-          reason: 'PAYMENT_DATA_INVALID'
-        }
+      .then(function() {
+        console.log("onPaymentAuthorized success");
+        resolve({
+          transactionState: 'SUCCESS'
+        });
       });
-    });
   });
 }
 
@@ -281,27 +257,16 @@ function onPaymentAuthorized(paymentData) {
 */
 //11 Process payment data returned by the API
 
-// change this code for A2
+// Leading the user to the success page after a successful payment
 let attempts = 0;
 function processPayment(paymentData) {
   return new Promise(function(resolve, reject) {
-        setTimeout(function() {
-                // @todo pass payment token to your gateway to process payment
-                paymentToken = paymentData.paymentMethodData.tokenizationData.token;
-
-        resolve({});
-    }, 3000);
+    console.log("processPayment started");
+    setTimeout(function() {
+      console.log("redirecting");
+      window.location.href =
+        "/A2/E-commerce-A2/success.php?gateway=googlepay";
+      resolve({});
+    }, 1000);
   });
-  // return new Promise(function(resolve, reject) {
-  //   setTimeout(function() {
-  //     // @todo pass payment token to your gateway to process payment
-  //     paymentToken = paymentData.paymentMethodData.tokenizationData.token;
-      
-  //     if (attempts++ % 2 == 0) {
-  //       reject(new Error('Every other attempt fails, next one should succeed'));
-  //     } else {
-  //       resolve({});
-  //     }
-  //   }, 500);
-  // });
 }

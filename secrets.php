@@ -1,0 +1,3 @@
+<?php
+
+$stripeSecretKey = 'sk_test_51UDepg2Y5jXSPMFcH7Im107XU7cpsNXJjVJui3LpNfzeVJ7MzPQHcO1fbygIGdilTkRpzrqKHjUeHHyKi6sgm10g00Wt9ybitk';

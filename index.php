@@ -32,7 +32,7 @@ session_start();
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#"><strong>ALICE'S</strong> ELECTRONIC BIKE Shop</a>
+                <a class="navbar-brand" href="index.php"><strong>ALICE'S</strong> ELECTRONIC BIKE Shop</a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
@@ -103,8 +103,7 @@ session_start();
                 </div>
 
                 
-<!-- Products -->
-                <!-- /.row -->
+                <!-- Products -->
                 <div class="row">
                     <div class="col-md-4 text-center col-sm-6 col-xs-6">
                         <div class="thumbnail product-box">
@@ -195,9 +194,6 @@ session_start();
 
     <!--Footer -->
     <div class="col-md-12 footer-box">
-
-
-        
 
             <div class="col-md-4">
                 <strong>Our Location</strong>

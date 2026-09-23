@@ -1,43 +1,69 @@
 <?php
-// Including the configuration file
-include_once "paypalconfig.php";
 session_start();
+require_once __DIR__ . '/cart_helpers.php';
 
-// Adding item to shopping cart
 if (isset($_POST['add_to_cart'])) {
-    $_SESSION['cart'][] = [
-        'name'  => $_POST['name'],
-        'price' => $_POST['price'],
-        'image' => $_POST['image'],
-        'description' => $_POST['description'],
-        'qty' => 1
-    ];
-}
+    $name = trim((string)($_POST['name'] ?? ''));
+    $price = (float)($_POST['price'] ?? 0);
+    $image = trim((string)($_POST['image'] ?? ''));
+    $description = trim((string)($_POST['description'] ?? ''));
 
-// Removing items in the shopping cart
-if(isset($_POST['remove_index'])) {
-    $index = $_POST['remove_index'];
-    unset($_SESSION['cart'][$index]);
-    $_SESSION['cart'] = array_values($_SESSION['cart']);
-    header("Location: cart.php");
-    exit();
-}
+    if ($name !== '') {
+        if (!isset($_SESSION['cart']) || !is_array($_SESSION['cart'])) {
+            $_SESSION['cart'] = [];
+        }
 
-// Updating price to match quantity
-if (isset($_POST['update_qty'])) {
-    $index = $_POST['update_index'];
-    $_SESSION['cart'][$index]['qty'] = (int)$_POST['qty'];
-    header("Location: cart.php");
-    exit();
-}
+        $found = false;
+        foreach ($_SESSION['cart'] as $index => $item) {
+            if (($item['name'] ?? '') === $name) {
+                $_SESSION['cart'][$index]['qty'] = (int)($item['qty'] ?? 1) + 1;
+                $_SESSION['cart'][$index]['price'] = $price;
+                $_SESSION['cart'][$index]['image'] = $image;
+                $_SESSION['cart'][$index]['description'] = $description;
+                $found = true;
+                break;
+            }
+        }
 
-// Calculating total price of items
-$cartTotal = 0;
-if (isset($_SESSION['cart'])) {
-    foreach ($_SESSION['cart'] as $item) {
-        $cartTotal += $item['price'] * $item['qty'];
+        if (!$found) {
+            $_SESSION['cart'][] = [
+                'name' => $name,
+                'price' => $price,
+                'image' => $image,
+                'description' => $description,
+                'qty' => 1,
+            ];
+        }
     }
+
+    header('Location: cart.php');
+    exit();
 }
+
+if (isset($_POST['remove_index'])) {
+    $index = (int)($_POST['remove_index'] ?? -1);
+    if (isset($_SESSION['cart'][$index])) {
+        unset($_SESSION['cart'][$index]);
+        $_SESSION['cart'] = array_values($_SESSION['cart']);
+    }
+    header('Location: cart.php');
+    exit();
+}
+
+if (isset($_POST['update_qty'])) {
+    $index = (int)($_POST['update_index'] ?? -1);
+    $qty = max(1, (int)($_POST['qty'] ?? 1));
+
+    if (isset($_SESSION['cart'][$index])) {
+        $_SESSION['cart'][$index]['qty'] = $qty;
+    }
+
+    header('Location: cart.php');
+    exit();
+}
+
+$cartItems = cart_items();
+$cartTotal = cart_total();
 ?>
 
 <!DOCTYPE html>
@@ -46,6 +72,16 @@ if (isset($_SESSION['cart'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shopping Cart</title>
+    <!-- Bootstrap core CSS -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    <!-- Fontawesome core CSS -->
+    <link href="assets/css/font-awesome.min.css" rel="stylesheet" />
+    <!--GOOGLE FONT -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <!--Slide Show Css -->
+    <link href="assets/ItemSlider/css/main-style.css" rel="stylesheet" />
+    <!-- custom CSS here -->
+    <link href="assets/css/style.css" rel="stylesheet" />
     <style>
         .cart-container {
             width: 80%;
@@ -91,42 +127,6 @@ if (isset($_SESSION['cart'])) {
             padding: 10px 20px;
             cursor: pointer;
         }
-        .payment-section {
-            margin-top: 40px;
-            border-top: 1px solid #ddd;
-            padding-top: 20px;
-        }
-        .payment-section h2 {
-            margin-bottom: 20px;
-        }
-        .payment-options {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        .payment-options label {
-            cursor: pointer;
-            border: 1px solid #ccc;
-            padding: 8px;
-            border-radius: 5px;
-            transition: 0.3s;
-        }
-        .payment-options label:hover {
-            border-color: #007bff;
-        }
-        .payment-options input[type="radio"] {
-            display: none;
-        }
-        .payment-options img {
-            width: 100px;
-            height: 60px;
-            object-fit: contain;
-        }
-        .payment-options input[type="radio"]:checked + img {
-            border: 3px solid #007bff;
-            border-radius: 5px;
-        }
         .checkout-container {
             display: none;
             justify-content: flex-end;
@@ -150,27 +150,71 @@ if (isset($_SESSION['cart'])) {
     </style>
 </head>
 <body>
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.php"><strong>ALICE'S</strong> ELECTRONIC BIKE Shop</a>
+            </div>
 
-<h1>Shopping Cart</h1>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#">Track Order</a></li>
+                    <li><a href="#">Login</a></li>
+                    <li><a href="#">Signup</a></li>
+
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">24x7 Support <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#"><strong>Call: </strong>+61-000-000-000</a></li>
+                            <li><a href="#"><strong>Mail: </strong>info@alicebikeshop.com</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#"><strong>Address: </strong>
+                                <div>
+                                    Melbourne,<br />
+                                    VIC 3000, AUSTRALIA
+                                </div>
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <form class="navbar-form navbar-right" role="search">
+                    <div class="form-group">
+                        <input type="text" placeholder="Enter Keyword Here ..." class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </form>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+
 
 <form method="post">
-<div class="cart-header">
-    <div>Product</div>
-    <div class="description">Product Description</div>
-    <div class="qty">Qty</div>
-    <div class="price">
-        $<?php echo number_format($item['price'], 2); ?>
+<div class="cart-container">
+    <div class="cart-header" style="margin-left: 20px;">
+        <h1>Shopping Cart</h1>
+        <div>Product</div>
+        <div class="description">Product Description</div>
+        <div class="qty">Qty</div>
+        <div class="price">
+            Price
+        </div>
+        <div class="total">
+            Total
+        </div>
     </div>
-    <div class="total">
-        $
-        <?php
-        echo number_format(
-            $item['price'] * $item['qty'],
-            2
-        );
-        ?>
-    </div>
-</div>
+
 <?php
 if(isset($_SESSION['cart'])) {
     foreach($_SESSION['cart'] as $index => $item) {
@@ -247,211 +291,12 @@ if(isset($_SESSION['cart'])) {
     <h3>Total: $<?php echo number_format($cartTotal, 2); ?></h3>
 </div>
 
+<form action="billingpage.php" method="post">
+    <button type="submit" class="checkout-btn">
+        Checkout
+    </button>
+</form>
 
-
-    <!-- Adding 4 payment options -->
-    <div class="payment-section">
-        <h2>Select Payment Option</h2>
-
-        <div class="payment-options">
-            <label>
-                <input type="radio" name="payment" value="visa">
-                <img src="assets/img/visa.jpg">
-            </label>
-
-            <label>
-                <input type="radio" name="payment" value="mastercard">
-                <img src="assets/img/mastercard.jpg">
-            </label>
-
-            <label>
-                <input type="radio" name="payment" value="googlepay" id="googlepay">
-                <img src="assets/img/googlepay.png">
-            </label>
-
-            <label>
-                <input type="radio" name="payment" value="paypal" id="paypal">
-                <img src="assets/img/paypal.png">
-            </label>
-        </div>
-        <div id="google-pay-container" style="display:none;">
-                <h3>Pay with Google Pay</h3>
-
-                <script src="index.js"></script>
-
-                <script async
-                        src="https://pay.google.com/gp/p/js/pay.js"
-                        onload="onGooglePayLoaded()">
-                </script>
-
-                <div id="google-pay-button"></div>
-        </div>
-
-            <!-- define PayPal button and send data -->
-					<form action="<?php echo PAYPAL_URL; ?>" method="post" style="padding: 0; margin: 0;">
-
-						<input type="hidden" name="cmd" value="_xclick" />
-
-                    <!-- Identify your business so that you can collect the payments. -->
-						<input type="hidden" name="business" value="<?php echo PAYPAL_ID; ?>" />
-
-                    <!-- Specify details about the item that buyers will purchase. part of this field will be used in ipn.php-->
-						<input type="hidden" name="item_name" value="Electric Bike Order">
-						<input type="hidden" name="item_number" value="ORDER001">
-						<input type="hidden" name="amount" value="<?php echo $cartTotal; ?>">
-						<input type="hidden" name="currency_code" value="<?php echo PAYPAL_CURRENCY; ?>" />
-
-                    <!-- Specify URLs -->
-						<input type="hidden" name="return" value="<?php echo PAYPAL_RETURN_URL; ?>">
-						<input type="hidden" name="notify_url" value="<?php echo PAYPAL_NOTIFY_URL; ?>">
-
-                    <div class="checkout-container"
-                        id="paypal-checkout-container">
-                        <button type="submit"
-                                class="checkout-btn">
-                            CHECKOUT NOW
-                        </button>
-                    </div>
-
-                </form>
-
-            <!-- define Google Pay button and send data -->
-                <div class="checkout-container"
-                    id="google-checkout-container">
-                    <button type="button"
-                            class="checkout-btn"
-                            id="google-pay-btn">
-
-                
-                        CHECKOUT NOW
-                    </button>
-                </div>
-            
-            <!-- define Mastercard button and send data -->
-            <div class="checkout-container"
-                id="mastercard-checkout-container">
-
-                <button type="button"
-                        class="checkout-btn"
-                        id="mastercard-btn">
-
-                    CHECKOUT NOW
-
-                </button>
-
-            </div>
-
-            <!-- define Visa button and send data -->
-            <div class="checkout-container"
-                id="visa-checkout-container"
-                style="display:none;">
-
-                <button type="button"
-                        class="checkout-btn"
-                        id="visa-btn">
-                    CHECKOUT NOW
-                </button>
-
-            </div>
-
-    </div>
 </div>
 
-
-<!-- Opening the correct payment page for the payment option selected -->
-<script>
-// defining payment method constants
-const paymentMethods =
-    document.querySelectorAll('input[name="payment"]');
-
-const paypalContainer =
-    document.getElementById('paypal-checkout-container');
-
-const googleCheckoutContainer =
-    document.getElementById('google-checkout-container');
-
-const mastercardContainer =
-    document.getElementById(
-        'mastercard-checkout-container'
-    );
-
-const visaContainer =
-    document.getElementById(
-        'visa-checkout-container'
-    );
-
-paymentMethods.forEach(method => {
-    method.addEventListener('change', function() {
-        if (this.value === 'paypal') {
-            paypalContainer.style.display = 'flex';
-            googleCheckoutContainer.style.display = 'none';
-            mastercardContainer.style.display = 'none';
-            visaContainer.style.display = 'none';
-
-        } else if (this.value === 'googlepay') {
-            paypalContainer.style.display = 'none';
-            googleCheckoutContainer.style.display = 'flex';
-            mastercardContainer.style.display = 'none';
-            visaContainer.style.display = 'none';
-
-        } else if (this.value === 'mastercard') {
-            paypalContainer.style.display = 'none';
-            googleCheckoutContainer.style.display = 'none';
-            mastercardContainer.style.display = 'flex';
-            visaContainer.style.display = 'none';
-
-        } else if (this.value === 'visa') {
-            paypalContainer.style.display = 'none';
-            googleCheckoutContainer.style.display = 'none';
-            mastercardContainer.style.display = 'none';
-            visaContainer.style.display = 'flex';
-
-        } else {
-            paypalContainer.style.display = 'none';
-            googleCheckoutContainer.style.display = 'none';
-            mastercardContainer.style.display = 'none';
-            visaContainer.style.display = 'none';
-
-        }
-
-    });
-
-});
-</script>
-
-
-<!-- Script for Google Pay to lead to payment page-->
-<script>
-const cartTotal = "<?php echo $cartTotal; ?>";
-</script>
-
-<script src="googlepay.js"></script>
-
-<script async
-    src="https://pay.google.com/gp/p/js/pay.js"
-    onload="onGooglePayLoaded()">
-</script>
-
-<script>
-document.getElementById('google-pay-btn').addEventListener('click', function() {
-    onGooglePaymentButtonClicked();
-});
-</script>
-
-<!-- Script for Mastercard to lead to payment page-->
-<script>
-document.getElementById('mastercard-btn').addEventListener('click', function() {
-    window.location.href = "mastercard.php";
-});
-</script>
-
-<!-- Script for Visa to lead to payment page-->
-<script>
-document.getElementById('visa-btn').addEventListener('click', function() {
-    window.location.href = "visa.php";
-});
-</script>
-
-
-</body>
 </html>
