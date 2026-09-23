@@ -69,6 +69,7 @@ if (isset($_SESSION['billing']) && is_array($_SESSION['billing'])) {
 }
 
 $cartTotal = cart_total();
+
 $squareApplicationId = trim((string)(getenv('SQUARE_SANDBOX_APPLICATION_ID') ?: ($_SERVER['SQUARE_SANDBOX_APPLICATION_ID'] ?? '')));
 $squareLocationId = trim((string)(getenv('SQUARE_SANDBOX_LOCATION_ID') ?: ($_SERVER['SQUARE_SANDBOX_LOCATION_ID'] ?? '')));
 ?>
