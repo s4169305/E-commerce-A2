@@ -1,6 +1,6 @@
 <?php
 include_once "paypalconfig.php";
-require_once __DIR__ . '/cart_helpers.php';
+require_once __DIR__ . '/cart-helpers.php';
 
 function normalizePaypalCountry($country) {
     $country = trim((string)$country);
@@ -237,7 +237,7 @@ $squareLocationId = trim((string)(getenv('SQUARE_SANDBOX_LOCATION_ID') ?: ($_SER
     </nav>
 
 <div class="payment-box" style="font-family: sans-serif;">
-    <form id="billing-form" action="billingpage.php" method="post">
+    <form id="billing-form" action="billing-page.php" method="post">
         <h2>Billing Address</h2>
 
         <div class="row">
@@ -245,8 +245,7 @@ $squareLocationId = trim((string)(getenv('SQUARE_SANDBOX_LOCATION_ID') ?: ($_SER
                 <label>First Name</label>
                 <input type="text" name="firstname" value="<?php echo htmlspecialchars($billing['firstname'], ENT_QUOTES, 'UTF-8'); ?>" placeholder="John" required>
             </div>
-
-            <div class="field">
+        <div class="field">
                 <label>Last Name</label>
                 <input type="text" name="lastname" value="<?php echo htmlspecialchars($billing['lastname'], ENT_QUOTES, 'UTF-8'); ?>" placeholder="Doeskip" required>
             </div>
@@ -278,17 +277,14 @@ $squareLocationId = trim((string)(getenv('SQUARE_SANDBOX_LOCATION_ID') ?: ($_SER
                 <label>City/Suburb</label>
                 <input type="text" name="city" value="<?php echo htmlspecialchars($billing['city'], ENT_QUOTES, 'UTF-8'); ?>" placeholder="City/Suburb" required>
             </div>
-
             <div class="field">
                 <label>Country</label>
                 <input type="text" name="country" value="<?php echo htmlspecialchars($billing['country'], ENT_QUOTES, 'UTF-8'); ?>" placeholder="Country" required>
             </div>
-
             <div class="field">
                 <label>State</label>
                 <input type="text" name="state" value="<?php echo htmlspecialchars($billing['state'], ENT_QUOTES, 'UTF-8'); ?>" placeholder="State" required>
             </div>
-
             <div class="field">
                 <label>Zip</label>
                 <input type="text" name="zip" value="<?php echo htmlspecialchars($billing['zip'], ENT_QUOTES, 'UTF-8'); ?>" placeholder="Zip" required>

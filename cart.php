@@ -1,7 +1,8 @@
 <?php
 session_start();
-require_once __DIR__ . '/cart_helpers.php';
+require_once __DIR__ . '/cart-helpers.php';
 
+// Adding items to the cart
 if (isset($_POST['add_to_cart'])) {
     $name = trim((string)($_POST['name'] ?? ''));
     $price = (float)($_POST['price'] ?? 0);
@@ -40,6 +41,7 @@ if (isset($_POST['add_to_cart'])) {
     exit();
 }
 
+// Removing items from the cart
 if (isset($_POST['remove_index'])) {
     $index = (int)($_POST['remove_index'] ?? -1);
     if (isset($_SESSION['cart'][$index])) {
@@ -50,6 +52,7 @@ if (isset($_POST['remove_index'])) {
     exit();
 }
 
+// Updating item quantity in the cart
 if (isset($_POST['update_qty'])) {
     $index = (int)($_POST['update_index'] ?? -1);
     $qty = max(1, (int)($_POST['qty'] ?? 1));
@@ -62,6 +65,7 @@ if (isset($_POST['update_qty'])) {
     exit();
 }
 
+// Getting cart items and total price
 $cartItems = cart_items();
 $cartTotal = cart_total();
 ?>
@@ -286,7 +290,7 @@ if(isset($_SESSION['cart'])) {
     <h3>Total: $<?php echo number_format($cartTotal, 2); ?></h3>
 </div>
 
-<form action="billingpage.php" method="post">
+<form action="billing-page.php" method="post">
     <button type="submit" class="checkout-btn">
         Checkout
     </button>

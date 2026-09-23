@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once __DIR__ . '/cart_helpers.php';
+require_once __DIR__ . '/cart-helpers.php';
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/secrets.php';
 
@@ -34,7 +34,7 @@ $checkout_session = $stripe->checkout->sessions->create([
     'line_items' => $lineItems,
     'mode' => 'payment',
     'success_url' => $YOUR_DOMAIN . '/success.php?gateway=stripe',
-    'cancel_url' => $YOUR_DOMAIN . '/billingpage.php',
+    'cancel_url' => $YOUR_DOMAIN . '/billing-page.php',
     'metadata' => [
         'cart_items' => json_encode($cartItems),
         'total' => (string)$cartTotal,

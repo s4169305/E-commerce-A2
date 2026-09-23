@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once __DIR__ . '/cart_helpers.php';
+require_once __DIR__ . '/cart-helpers.php';
 
 $cartItems = cart_items();
 $cartTotal = cart_total();
@@ -206,7 +206,7 @@ if (empty($cartItems)) {
 
         <main class="payment-panel">
             <div class="payment-content">
-                <a class="back-link" href="billingpage.php">&larr; Back to payment methods</a>
+                <a class="back-link" href="billing-page.php">&larr; Back to payment methods</a>
                 <h2>Pay with Square</h2>
                 <span class="form-label">Card information</span>
                 <p id="square-status" role="status"></p>

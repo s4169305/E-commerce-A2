@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once __DIR__ . '/cart_helpers.php';
+require_once __DIR__ . '/cart-helpers.php';
 
 header('Content-Type: application/json');
 

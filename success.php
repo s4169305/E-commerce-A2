@@ -1,7 +1,7 @@
 <?php
 session_start();
 include 'paypalconfig.php';
-require_once __DIR__ . '/cart_helpers.php';
+require_once __DIR__ . '/cart-helpers.php';
 
 if (!empty($_GET['item_number']) && !empty($_GET['tx']) && !empty($_GET['amt']) && !empty($_GET['cc']) && !empty($_GET['st'])) {
     $item_number = $_GET['item_number'];
@@ -135,14 +135,12 @@ if (isset($_GET['gateway']) && $_GET['gateway'] == 'square' && !empty($_GET['tra
         <p><b>Payment Status:</b> <?php echo $payment_status; ?></p>
         <p>
             <b>Payment Method:</b>
-            <?php if ($mastercard) { ?>
-                Mastercard
-            <?php } elseif ($visa) { ?>
-                Visa
+            <?php if ($stripe) { ?>
+                Stripe
             <?php } elseif ($googlepay) { ?>
                 Google Pay
             <?php } elseif ($square) { ?>
-                Square Sandbox
+                Square 
             <?php } else { ?>
                 PayPal
             <?php } ?>
