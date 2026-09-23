@@ -45,6 +45,14 @@ if (isset($_GET['gateway']) && $_GET['gateway'] == 'stripe') {
     $payment_status = 'Completed';
 }
 
+$square = false;
+if (isset($_GET['gateway']) && $_GET['gateway'] == 'square' && !empty($_GET['transaction_id'])) {
+    $square = true;
+    $txn_id = $_GET['transaction_id'];
+    $payment_gross = cart_total();
+    $payment_status = 'Completed';
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -113,9 +121,9 @@ if (isset($_GET['gateway']) && $_GET['gateway'] == 'stripe') {
         </div>
         <!-- /.container-fluid -->
     </nav>
-<h1>Payment Info</h1>
 
 <div class="container">
+    <h1>Payment Info</h1>
     <div class="status">
 
         <?php if (!empty($txn_id)) { ?>
@@ -133,6 +141,8 @@ if (isset($_GET['gateway']) && $_GET['gateway'] == 'stripe') {
                 Visa
             <?php } elseif ($googlepay) { ?>
                 Google Pay
+            <?php } elseif ($square) { ?>
+                Square Sandbox
             <?php } else { ?>
                 PayPal
             <?php } ?>

@@ -69,6 +69,8 @@ if (isset($_SESSION['billing']) && is_array($_SESSION['billing'])) {
 }
 
 $cartTotal = cart_total();
+$squareApplicationId = trim((string)(getenv('SQUARE_SANDBOX_APPLICATION_ID') ?: ($_SERVER['SQUARE_SANDBOX_APPLICATION_ID'] ?? '')));
+$squareLocationId = trim((string)(getenv('SQUARE_SANDBOX_LOCATION_ID') ?: ($_SERVER['SQUARE_SANDBOX_LOCATION_ID'] ?? '')));
 ?>
 
 <!DOCTYPE html>
@@ -177,6 +179,11 @@ $cartTotal = cart_total();
         .checkout-btn {
             display: inline-block;
             min-width: 180px;
+        }
+
+        #square-card-container {
+            max-width: 420px;
+            margin-bottom: 15px;
         }
     </style>
 </head>
@@ -301,11 +308,6 @@ $cartTotal = cart_total();
 
         <div class="payment-options">
             <label>
-                <input type="radio" name="payment" value="visa">
-                <img src="assets/img/visa.jpg" alt="Visa">
-            </label>
-
-            <label>
                 <input type="radio" name="payment" value="stripe">
                 <img src="assets/img/Stripe-Logo.png" alt="Stripe">
             </label>
@@ -318,6 +320,11 @@ $cartTotal = cart_total();
             <label>
                 <input type="radio" name="payment" value="paypal" id="paypal">
                 <img src="assets/img/paypal.png" alt="PayPal">
+            </label>
+
+            <label>
+                <input type="radio" name="payment" value="square" id="Square">
+                <img src="assets/img/Square-Logo.png" alt="Square">
             </label>
         </div>
 
@@ -358,8 +365,8 @@ $cartTotal = cart_total();
             <button type="button" class="checkout-btn" id="stripe-btn">CHECKOUT NOW</button>
         </div>
 
-        <div class="checkout-container" id="visa-checkout-container">
-            <button type="button" class="checkout-btn" id="visa-btn">CHECKOUT NOW</button>
+        <div class="checkout-container" id="square-checkout-container">
+            <button type="button" class="checkout-btn" id="square-checkout-btn">CHECKOUT NOW</button>
         </div>
 </div>
 
@@ -368,7 +375,7 @@ const paymentMethods = document.querySelectorAll('input[name="payment"]');
 const paypalContainer = document.getElementById('paypal-checkout-container');
 const googleCheckoutContainer = document.getElementById('google-checkout-container');
 const stripeContainer = document.getElementById('stripe-checkout-container');
-const visaContainer = document.getElementById('visa-checkout-container');
+const squareContainer = document.getElementById('square-checkout-container');
 
 function validatePayPalAddress() {
     const requiredFields = [
@@ -427,7 +434,7 @@ paymentMethods.forEach(method => {
         paypalContainer.style.display = selected === 'paypal' ? 'block' : 'none';
         googleCheckoutContainer.style.display = selected === 'googlepay' ? 'block' : 'none';
         stripeContainer.style.display = selected === 'stripe' ? 'block' : 'none';
-        visaContainer.style.display = selected === 'visa' ? 'block' : 'none';
+        squareContainer.style.display = selected === 'square' ? 'block' : 'none';
     });
 });
 </script>
@@ -456,12 +463,13 @@ if (stripeButton) {
     });
 }
 
-const visaButton = document.getElementById('visa-btn');
-if (visaButton) {
-    visaButton.addEventListener('click', function () {
-        window.location.href = 'visa.php';
+const squareCheckoutButton = document.getElementById('square-checkout-btn');
+if (squareCheckoutButton) {
+    squareCheckoutButton.addEventListener('click', function () {
+        window.location.href = 'square-checkout.php';
     });
 }
+
 </script>
 
 </body>

@@ -221,11 +221,6 @@ if(isset($_SESSION['cart'])) {
 ?>
 <div class="cart-item">
     <div>
-        <input type="checkbox"
-            name="selected[]"
-            value="<?php echo $index; ?>">
-    </div>
-    <div>
         <img src="<?php echo $item['image']; ?>" alt="<?php echo $item['name']; ?>"
             width="100">
     </div>
