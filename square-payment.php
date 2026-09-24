@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/cart-helpers.php';
+require_once __DIR__ . '/square-config.php';
 
 header('Content-Type: application/json');
 
@@ -10,8 +11,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$accessToken = trim((string)(getenv('SQUARE_SANDBOX_ACCESS_TOKEN') ?: ($_SERVER['SQUARE_SANDBOX_ACCESS_TOKEN'] ?? '')));
-$locationId = trim((string)(getenv('SQUARE_SANDBOX_LOCATION_ID') ?: ($_SERVER['SQUARE_SANDBOX_LOCATION_ID'] ?? '')));
+$accessToken = $squareAccessToken ?? '';
+$locationId = $squareLocationId ?? '';
 $input = json_decode(file_get_contents('php://input'), true);
 $sourceId = trim((string)($input['source_id'] ?? ''));
 

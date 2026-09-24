@@ -1,11 +1,12 @@
 <?php
 session_start();
 require_once __DIR__ . '/cart-helpers.php';
+require_once __DIR__ . '/square-config.php';
 
 $cartItems = cart_items();
 $cartTotal = cart_total();
-$squareApplicationId = trim((string)(getenv('SQUARE_SANDBOX_APPLICATION_ID') ?: ($_SERVER['SQUARE_SANDBOX_APPLICATION_ID'] ?? '')));
-$squareLocationId = trim((string)(getenv('SQUARE_SANDBOX_LOCATION_ID') ?: ($_SERVER['SQUARE_SANDBOX_LOCATION_ID'] ?? '')));
+$squareApplicationId = $squareApplicationId ?? '';
+$squareLocationId = $squareLocationId ?? '';
 
 if (empty($cartItems)) {
     header('Location: index.php');

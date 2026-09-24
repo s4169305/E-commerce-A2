@@ -11,7 +11,7 @@ async function initializeSquare() {
 
     const config = window.squareConfig || {};
     if (!config.applicationId || !config.locationId) {
-        status.textContent = 'Square is not configured. Add the Sandbox Application ID and Location ID to Apache, then restart XAMPP.';
+        status.textContent = 'Square is not configured. Add the Sandbox Application ID and Location ID in square-config.php or your server environment.';
         return;
     }
 
