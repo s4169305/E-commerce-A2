@@ -11,23 +11,6 @@ if (!empty($_GET['item_number']) && !empty($_GET['tx']) && !empty($_GET['amt']) 
     $payment_status = $_GET['st'];
 }
 
-$mastercard = false;
-if (isset($_GET['gateway']) && $_GET['gateway'] == 'mastercard' && isset($_SESSION['mastercard_payment'])) {
-    $mastercard = true;
-    $mc = $_SESSION['mastercard_payment'];
-    $txn_id = $mc['transaction_id'];
-    $payment_gross = $mc['amount'];
-    $payment_status = $mc['status'];
-}
-
-$visa = false;
-if (isset($_GET['gateway']) && $_GET['gateway'] == 'visa' && isset($_SESSION['visa_payment'])) {
-    $visa = true;
-    $visaData = $_SESSION['visa_payment'];
-    $txn_id = $visaData['transaction_id'];
-    $payment_gross = $visaData['amount'];
-    $payment_status = $visaData['status'];
-}
 
 $googlepay = false;
 if (isset($_GET['gateway']) && $_GET['gateway'] == 'googlepay') {
