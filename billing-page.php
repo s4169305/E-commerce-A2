@@ -68,12 +68,9 @@ if (isset($_SESSION['billing']) && is_array($_SESSION['billing'])) {
     $billing = array_merge($billing, $_SESSION['billing']);
 }
 
-require_once __DIR__ . '/square-config.php';
-
 $cartTotal = cart_total();
-
-$squareApplicationId = $squareApplicationId ?? '';
-$squareLocationId = $squareLocationId ?? '';
+$squareApplicationId = trim((string)(getenv('SQUARE_SANDBOX_APPLICATION_ID') ?: ($_SERVER['SQUARE_SANDBOX_APPLICATION_ID'] ?? '')));
+$squareLocationId = trim((string)(getenv('SQUARE_SANDBOX_LOCATION_ID') ?: ($_SERVER['SQUARE_SANDBOX_LOCATION_ID'] ?? '')));
 ?>
 
 <!DOCTYPE html>
